@@ -3,44 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NewBery Cricket | Premium Cricket Bats & Gear</title>
+    <title>Newbery Cricket | Premium Cricket Bats & Gear</title>
     <link rel="stylesheet" href="style.css">
+
+    <!-- Firebase SDK -->
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-analytics.js";
+      import { getAuth } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+      
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDErVE7lfwHSKpLIar9dLdOH8K8nmYeons",
+        authDomain: "cricket-46554.firebaseapp.com",
+        projectId: "cricket-46554",
+        storageBucket: "cricket-46554.firebasestorage.app",
+        messagingSenderId: "969828798254",
+        appId: "1:969828798254:web:28c301eb4ec8065d32f4bf",
+        measurementId: "G-72LJPJTXEE"
+      };
+      
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+      const auth = getAuth(app);
+      
+      // Make auth available globally
+      window.auth = auth;
+    </script>
 </head>
 <body>
-    
     
     <header>
         <div class="container">
             <nav>
-                <div class="logo"><img src="Newberry_Logo-removebg-preview.png" alt="" class="logo_N"></div>
+                <div class="logo"><img src="Newberry_Logo-removebg-preview.png" alt="Newbery Logo" class="logo_N"></div>
                 <ul class="nav-links">
                     <li><a href="#home">Home</a></li>
                     <li><a href="#bats">Bats</a></li>
                     <li><a href="#equipment">Equipment</a></li>
                     <li><a href="#about">About</a></li>
                     <li><a href="#contact">Contact</a></li>
-                    <li><a href="#Cart"><img src="cart.png" alt="" class="Cart"><span id="cart-count">0</span></a></li>
+
+                    <li class="dropdown" id="account-section">
+                        <a href="#" class="dropbtn">Account</a>
+                        <div class="dropdown-content" id="account-menu">
+                            <a href="login.html" id="signin-link">Sign In</a>
+                            <a href="signup.html" id="signup-link">Sign Up</a>
+                            <a href="#" id="logout-link" style="display: none;">Logout</a>
+                        </div>
+                    </li>
+
+                    <li>
+                        <a href="#cart">
+                            <img src="cart.png" alt="Cart" class="Cart">
+                            <span id="cart-count">0</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>
     </header>
-
-
-    
-    
-    
     
     <section class="hero" id="home">
         <div class="container">
             <div class="hero-content">
                 <h1>Premium Newbery Cricket Bats & Equipment</h1>
-                <p class="animated-text">Elevate your game with professional-grade cricket gear endorsed by professionals. Our  cricket bats are crafted with precision for optimal performance on the pitch.</p>
+                <p class="animated-text">Elevate your game with professional-grade cricket gear endorsed by professionals. Our cricket bats are crafted with precision for optimal performance on the pitch.</p>
                 <a href="#bats" class="btn">Shop Now</a>
             </div>
             <div class="hero-image">
-                <img src="Colour.png" alt="Brand Ambassador with Cricket Bat\\" />
-                
-
+                <img src="Colour.png" alt="Brand Ambassador with Cricket Bat" />
             </div>
         </div>
     </section>
@@ -100,7 +134,7 @@
                     <div class="product-info">
                         <div class="product-title">Newbery League Red Ball</div>
                         <div class="product-price">₹2,500</div>
-                        <p>The hardcore center ensures long-lasting shape retention</p>
+                        <p>Lightweight protection with impact-absorbing foam panels</p>
                         <a href="#" class="btn">Add to Cart</a>
                     </div>
                 </div>
@@ -117,13 +151,12 @@
         </div>
     </section>
     
-    
     <section class="about" id="about">
         <div class="container">
             <div class="about-content">
                 <div class="about-text">
                     <h2>About Our Vision</h2>
-                    <p>Our vision is to bring professional-grade cricket equipment to players at every level. With decades of expertise and craftsmanship, Newbery is dedicated to creating the finest English willow bats and gear.We uphold a legacy of precision and innovation, ensuring that every piece of equipment meets the highest standards for performance and durability. Our goal is to empower cricketers worldwide with premium-quality bats and accessories, helping them achieve excellence on the pitch.Our commitment to tradition and excellence drives us to push the boundaries of bat-making, delivering unmatched balance, power, and craftsmanship.</p>
+                    <p>Our vision is to bring professional-grade cricket equipment to players at every level. With decades of expertise and craftsmanship, Newbery is dedicated to creating the finest English willow bats and gear. We uphold a legacy of precision and innovation, ensuring that every piece of equipment meets the highest standards for performance and durability. Our goal is to empower cricketers worldwide with premium-quality bats and accessories, helping them achieve excellence on the pitch. Our commitment to tradition and excellence drives us to push the boundaries of bat-making, delivering unmatched balance, power, and craftsmanship.</p>
                     <a href="#" class="btn">Learn More</a>
                 </div>
                 <div class="about-image">
@@ -143,7 +176,68 @@
             <p>&copy; Newbery Cricket 2025. All Rights Reserved.</p>
         </div>
     </footer>
+    
     <script src="script.js"></script>
+    <script type="module">
+        
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const auth = window.auth; // Get the auth instance from the global scope
+            
+            
+            onAuthStateChanged(auth, (user) => {
+                updateAccountMenu(user);
+            });
+            
+            
+            function updateAccountMenu(user) {
+                const signinLink = document.getElementById('signin-link');
+                const signupLink = document.getElementById('signup-link');
+                const logoutLink = document.getElementById('logout-link');
+                
+                if (user) {
+                    // User is signed in
+                    if (signinLink) signinLink.style.display = 'none';
+                    if (signupLink) signupLink.style.display = 'none';
+                    if (logoutLink) logoutLink.style.display = 'block';
+                    
+                    // Setup logout functionality
+                    if (logoutLink) {
+                        logoutLink.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            signOut(auth).then(() => {
+                                // Sign-out successful
+                                localStorage.removeItem('userLoggedIn');
+                                localStorage.removeItem('userEmail');
+                                alert('You have been logged out successfully.');
+                                window.location.reload();
+                            }).catch((error) => {
+                                // An error happened
+                                console.error('Logout Error:', error);
+                            });
+                        });
+                    }
+                } else {
+                    
+                    if (signinLink) signinLink.style.display = 'block';
+                    if (signupLink) signupLink.style.display = 'block';
+                    if (logoutLink) logoutLink.style.display = 'none';
+                }
+            }
+            
+            
+            if (localStorage.getItem('userLoggedIn') === 'true') {
+                const signinLink = document.getElementById('signin-link');
+                const signupLink = document.getElementById('signup-link');
+                const logoutLink = document.getElementById('logout-link');
+                
+                if (signinLink) signinLink.style.display = 'none';
+                if (signupLink) signupLink.style.display = 'none';
+                if (logoutLink) logoutLink.style.display = 'block';
+            }
+        });
+    </script>
 
 </body>
 </html>
