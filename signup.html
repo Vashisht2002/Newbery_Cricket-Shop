@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)), 
+                        url("Newberry_Logo-removebg-preview.png") center/cover no-repeat;
+        }
+
+        .signup-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 24px;
+            color: #4a4a8a;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            display: block;
+        }
+
+        button {
+            width: 100%;
+            background-color: #4a4a8a;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #3b3b72;
+        }
+
+        p {
+            margin-top: 15px;
+            font-size: 16px;
+        }
+
+        p a {
+            color: #4a4a8a;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        p a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 1024px) {
+            .signup-container {
+                max-width: 380px;
+            }
+            
+            h2 {
+                font-size: 22px;
+            }
+        }
+        
+        
+        @media (max-width: 768px) {
+            .signup-container {
+                max-width: 340px;
+                padding: 25px;
+            }
+            
+            h2 {
+                font-size: 20px;
+                margin-bottom: 15px;
+            }
+            
+            input {
+                padding: 9px;
+                font-size: 15px;
+            }
+            
+            button {
+                padding: 10px;
+                font-size: 16px;
+            }
+        }
+        
+        
+        @media (max-width: 576px) {
+            body {
+                background-position: top center;
+            }
+            
+            .signup-container {
+                max-width: 90%;
+                padding: 20px;
+            }
+            
+            h2 {
+                font-size: 18px;
+                margin-bottom: 12px;
+            }
+            
+            input {
+                margin: 8px 0;
+                font-size: 14px;
+            }
+            
+            button {
+                padding: 10px;
+                font-size: 15px;
+            }
+            
+            p {
+                font-size: 14px;
+            }
+        }
+        
+        
+        @media (max-width: 375px) {
+            .signup-container {
+                padding: 15px;
+            }
+            
+            h2 {
+                font-size: 16px;
+                margin-bottom: 10px;
+            }
+            
+            input {
+                padding: 8px;
+                margin: 6px 0;
+                font-size: 13px;
+            }
+            
+            button {
+                padding: 8px;
+                font-size: 14px;
+            }
+            
+            p {
+                margin-top: 10px;
+                font-size: 13px;
+            }
+        }
+        
+        
+        @media (max-width: 320px) {
+            .signup-container {
+                padding: 12px;
+            }
+            
+            input {
+                padding: 7px;
+                margin: 5px 0;
+            }
+        }
+        
+        
+        @media (max-height: 600px) {
+            body {
+                align-items: flex-start;
+                padding-top: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="signup-container">
+        <h2>Sign Up</h2>
+        <input type="email" id="signup-email" placeholder="Enter Email">
+        <input type="password" id="signup-password" placeholder="Enter Password">
+        <button id="signup-btn">Sign Up</button>
+        <p>Already have an account? <a href="login.html">Sign In</a></p>
+    </div>
+
+     <!-- ✅ Firebase Setup (Latest Version) -->
+     <script type="module">
+        //  Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-analytics.js";
+
+        //  Firebase Configuration (As per Google)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDErVE7lfwHSKpLIar9dLdOH8K8nmYeons",
+            authDomain: "cricket-46554.firebaseapp.com",
+            projectId: "cricket-46554",
+            storageBucket: "cricket-46554.firebasestorage.app",
+            messagingSenderId: "969828798254",
+            appId: "1:969828798254:web:28c301eb4ec8065d32f4bf",
+            measurementId: "G-72LJPJTXEE"
+        };
+
+        // ✅ Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const analytics = getAnalytics(app);
+
+        // ✅ Wait for DOM to fully load before accessing elements
+        document.addEventListener('DOMContentLoaded', function() {
+            const signupForm = document.getElementById("signup-form");
+            const signupBtn = document.getElementById("signup-btn");
+            
+            if (signupForm) {
+                signupForm.addEventListener("submit", function(event) {
+                    event.preventDefault(); // Prevent form submission
+                    
+                    let email = document.getElementById("signup-email").value.trim();
+                    let password = document.getElementById("signup-password").value.trim();
+
+                    if (!email || !password) {
+                        alert("❌ Please enter both email and password.");
+                        return;
+                    }
+                    if (password.length < 6) {
+                        alert("⚠️ Password must be at least 6 characters long.");
+                        return;
+                    }
+
+                    createUserWithEmailAndPassword(auth, email, password)
+                        .then((userCredential) => {
+                            console.log("✅ Sign-Up Successful:", userCredential);
+                            alert("🎉 Sign-Up Successful! Redirecting to login...");
+                            window.location.href = "login.html"; // Redirect to login
+                        })
+                        .catch((error) => {
+                            console.error("❌ Sign-Up Error:", error);
+                            alert("⚠️ " + error.message);
+                        });
+                });
+            } else {
+                console.error("Could not find signup form element");
+            }
+            
+            
+            if (signupBtn && !signupForm) {
+                signupBtn.addEventListener("click", handleSignup);
+            }
+            
+            function handleSignup() {
+                let email = document.getElementById("signup-email").value.trim();
+                let password = document.getElementById("signup-password").value.trim();
+
+                if (!email || !password) {
+                    alert("❌ Please enter both email and password.");
+                    return;
+                }
+                if (password.length < 6) {
+                    alert("⚠️ Password must be at least 6 characters long.");
+                    return;
+                }
+
+                createUserWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        console.log("✅ Sign-Up Successful:", userCredential);
+                        alert("🎉 Sign-Up Successful! Redirecting to login...");
+                        window.location.href = "login.html"; // Redirect to login
+                    })
+                    .catch((error) => {
+                        console.error("❌ Sign-Up Error:", error);
+                        alert("⚠️ " + error.message);
+                    });
+            }
+        });
+    </script>
+
+
+</body>
+</html>
