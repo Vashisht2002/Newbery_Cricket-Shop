@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Premium Payment</title>
+  <style>
+    /* Import Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    /* Reset some defaults */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #333;
+    }
+
+    .payment-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .payment-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .payment-container:hover::before {
+      left: 100%;
+    }
+
+    .payment-header {
+      margin-bottom: 30px;
+    }
+
+    .payment-header h3 {
+      margin: 0 0 8px 0;
+      font-weight: 700;
+      font-size: 2rem;
+      color: #2d3748;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .payment-header p {
+      margin: 0;
+      color: #718096;
+      font-weight: 400;
+      font-size: 0.9rem;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #4a5568;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 16px 20px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      background: #f7fafc;
+      color: #2d3748;
+    }
+
+    input[type="text"]:focus {
+      border-color: #667eea;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      outline: none;
+      transform: translateY(-2px);
+    }
+
+    input[type="text"]::placeholder {
+      color: #a0aec0;
+      font-weight: 400;
+    }
+
+    .pay-button {
+      margin-top: 30px;
+      width: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 18px 0;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pay-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .pay-button:active {
+      transform: translateY(0);
+    }
+
+    .pay-button.processing {
+      background: #4299e1;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .pay-button.success {
+      background: #48bb78;
+    }
+
+    /* Loading Animation */
+    .loading-spinner {
+      display: none;
+      width: 24px;
+      height: 24px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top: 3px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Success Checkmark Animation */
+    .success-checkmark {
+      display: none;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #48bb78;
+      position: relative;
+      margin: 20px auto;
+      animation: checkmark-bounce 0.6s ease-in-out;
+    }
+
+    .success-checkmark::after {
+      content: '';
+      position: absolute;
+      left: 22px;
+      top: 12px;
+      width: 16px;
+      height: 28px;
+      border: solid white;
+      border-width: 0 4px 4px 0;
+      transform: rotate(45deg);
+      animation: checkmark-draw 0.3s ease-in-out 0.3s both;
+    }
+
+    @keyframes checkmark-bounce {
+      0% {
+        transform: scale(0);
+        opacity: 0;
+      }
+      50% {
+        transform: scale(1.1);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes checkmark-draw {
+      0% {
+        width: 0;
+        height: 0;
+      }
+      100% {
+        width: 16px;
+        height: 28px;
+      }
+    }
+
+    .payment-message {
+      margin-top: 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      min-height: 24px;
+      transition: all 0.3s ease;
+    }
+
+    .payment-message.error {
+      color: #e53e3e;
+      animation: shake 0.5s ease-in-out;
+    }
+
+    .payment-message.processing {
+      color: #4299e1;
+    }
+
+    .payment-message.success {
+      color: #48bb78;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    /* Card Animation */
+    .card-animation {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80px;
+      height: 50px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 8px;
+      display: none;
+      opacity: 0;
+      animation: card-float 2s ease-in-out infinite;
+    }
+
+    .card-animation::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      width: 24px;
+      height: 16px;
+      background: #ffd700;
+      border-radius: 2px;
+    }
+
+    .card-animation.show {
+      display: block;
+      opacity: 1;
+    }
+
+    @keyframes card-float {
+      0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
+      50% { transform: translate(-50%, -50%) translateY(-10px); }
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .payment-container {
+        padding: 30px 20px;
+        margin: 10px;
+      }
+      
+      .payment-header h3 {
+        font-size: 1.6rem;
+      }
+    }
+
+    /* Form validation styles */
+    input.invalid {
+      border-color: #e53e3e;
+      background: #fed7d7;
+      animation: shake 0.5s ease-in-out;
+    }
+
+    input.valid {
+      border-color: #48bb78;
+      background: #f0fff4;
+    }
+  </style>
+</head>
+<body>
+  <div class="payment-container">
+    <div class="payment-header">
+      <h3>Payment</h3>
+      <p>Secure checkout powered by premium encryption</p>
+    </div>
+
+    <form id="payment-form" autocomplete="off" spellcheck="false">
+      <div class="form-group">
+        <label for="card-number">Card Number</label>
+        <input type="text" id="card-number" maxlength="19" placeholder="1234 5678 9012 3456" required inputmode="numeric" />
+      </div>
+
+      <div class="form-group">
+        <label for="expiry">Expiry Date</label>
+        <input type="text" id="expiry" maxlength="5" placeholder="MM/YY" required inputmode="numeric" />
+      </div>
+
+      <div class="form-group">
+        <label for="cvv">Security Code</label>
+        <input type="text" id="cvv" maxlength="3" placeholder="123" required inputmode="numeric" />
+      </div>
+
+      <button type="submit" class="pay-button" id="pay-btn">
+        <span class="button-text">Pay Now</span>
+        <div class="loading-spinner" id="loading-spinner"></div>
+      </button>
+    </form>
+
+    <div class="card-animation" id="card-animation"></div>
+    <div class="success-checkmark" id="success-checkmark"></div>
+    <div class="payment-message" id="payment-message"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('payment-form');
+    const message = document.getElementById('payment-message');
+    const payButton = document.getElementById('pay-btn');
+    const buttonText = payButton.querySelector('.button-text');
+    const loadingSpinner = document.getElementById('loading-spinner');
+    const successCheckmark = document.getElementById('success-checkmark');
+    const cardAnimation = document.getElementById('card-animation');
+
+    // Input formatting
+    const cardNumberInput = document.getElementById('card-number');
+    const expiryInput = document.getElementById('expiry');
+    const cvvInput = document.getElementById('cvv');
+
+    // Format card number with spaces
+    cardNumberInput.addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+      let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+      e.target.value = formattedValue;
+      
+      // Visual feedback
+      if (value.length === 16) {
+        e.target.classList.add('valid');
+        e.target.classList.remove('invalid');
+      } else {
+        e.target.classList.remove('valid');
+      }
+    });
+
+    // Format expiry date
+    expiryInput.addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+      if (value.length >= 2) {
+        value = value.substring(0, 2) + '/' + value.substring(2, 4);
+      }
+      e.target.value = value;
+      
+      // Visual feedback
+      if (value.length === 5) {
+        e.target.classList.add('valid');
+        e.target.classList.remove('invalid');
+      } else {
+        e.target.classList.remove('valid');
+      }
+    });
+
+    // CVV formatting
+    cvvInput.addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+      e.target.value = value;
+      
+      // Visual feedback
+      if (value.length === 3) {
+        e.target.classList.add('valid');
+        e.target.classList.remove('invalid');
+      } else {
+        e.target.classList.remove('valid');
+      }
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const cardNumber = cardNumberInput.value.trim();
+      const expiry = expiryInput.value.trim();
+      const cvv = cvvInput.value.trim();
+
+      // Reset states
+      message.className = 'payment-message';
+      cardNumberInput.classList.remove('invalid');
+      expiryInput.classList.remove('invalid');
+      cvvInput.classList.remove('invalid');
+
+      // Validate card number
+      if (!/^\d{4} \d{4} \d{4} \d{4}$/.test(cardNumber)) {
+        showError("Invalid card number format", cardNumberInput);
+        return;
+      }
+
+      // Validate expiry date
+      if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiry)) {
+        showError("Invalid expiry date format", expiryInput);
+        return;
+      }
+
+      // Validate CVV
+      if (!/^\d{3}$/.test(cvv)) {
+        showError("Invalid security code", cvvInput);
+        return;
+      }
+
+      // Start processing animation
+      startProcessing();
+
+      // Simulate payment processing
+      setTimeout(() => {
+        showSuccess();
+      }, 3000);
+    });
+
+    function showError(text, input = null) {
+      message.textContent = text;
+      message.className = 'payment-message error';
+      if (input) {
+        input.classList.add('invalid');
+        input.focus();
+      }
+    }
+
+    function startProcessing() {
+      // Button state
+      payButton.classList.add('processing');
+      buttonText.style.display = 'none';
+      loadingSpinner.style.display = 'block';
+      
+      // Message
+      message.textContent = "Processing your payment...";
+      message.className = 'payment-message processing';
+      
+      // Show card animation
+      cardAnimation.classList.add('show');
+      
+      // Disable form
+      const inputs = form.querySelectorAll('input');
+      inputs.forEach(input => input.disabled = true);
+    }
+
+    function showSuccess() {
+      // Hide loading elements
+      loadingSpinner.style.display = 'none';
+      cardAnimation.classList.remove('show');
+      
+      // Button state
+      payButton.classList.remove('processing');
+      payButton.classList.add('success');
+      buttonText.textContent = 'Payment Complete';
+      buttonText.style.display = 'block';
+      
+      // Show success checkmark
+      successCheckmark.style.display = 'block';
+      
+      // Success message
+      message.textContent = "Payment successful! Thank you for your purchase.";
+      message.className = 'payment-message success';
+      
+      // Optional: Reset form after delay
+      setTimeout(() => {
+        resetForm();
+      }, 5000);
+    }
+
+    function resetForm() {
+      // Reset form
+      form.reset();
+      
+      // Reset button
+      payButton.classList.remove('success');
+      buttonText.textContent = 'Pay Now';
+      
+      // Hide success elements
+      successCheckmark.style.display = 'none';
+      
+      // Enable form
+      const inputs = form.querySelectorAll('input');
+      inputs.forEach(input => {
+        input.disabled = false;
+        input.classList.remove('valid', 'invalid');
+      });
+      
+      // Clear message
+      message.textContent = '';
+      message.className = 'payment-message';
+    }
+  </script>
+</body>
+</html>
