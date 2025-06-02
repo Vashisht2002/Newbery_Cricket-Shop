@@ -6,9 +6,9 @@
     <title>Newbery Cricket | Premium Cricket Bats & Gear</title>
     <link rel="stylesheet" href="style.css">
 
-    <!-- Firebase SDK -->
+    
     <script type="module">
-      // Import the functions you need from the SDKs you need
+      
       import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
       import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-analytics.js";
       import { getAuth } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
@@ -24,12 +24,12 @@
         measurementId: "G-72LJPJTXEE"
       };
       
-      // Initialize Firebase
+    
       const app = initializeApp(firebaseConfig);
       const analytics = getAnalytics(app);
       const auth = getAuth(app);
       
-      // Make auth available globally
+      
       window.auth = auth;
     </script>
 </head>
@@ -56,15 +56,22 @@
                     </li>
 
                     <li>
-                        <a href="#cart">
+                        
+                        
+                        <a href="cart.html">
                             <img src="cart.png" alt="Cart" class="Cart">
                             <span id="cart-count">0</span>
                         </a>
                     </li>
                 </ul>
+                
             </nav>
         </div>
     </header>
+
+
+
+
     
     <section class="hero" id="home">
         <div class="container">
@@ -183,7 +190,7 @@
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
         
         document.addEventListener('DOMContentLoaded', function() {
-            const auth = window.auth; // Get the auth instance from the global scope
+            const auth = window.auth; 
             
             
             onAuthStateChanged(auth, (user) => {
@@ -202,12 +209,12 @@
                     if (signupLink) signupLink.style.display = 'none';
                     if (logoutLink) logoutLink.style.display = 'block';
                     
-                    // Setup logout functionality
+                    
                     if (logoutLink) {
                         logoutLink.addEventListener('click', function(e) {
                             e.preventDefault();
                             signOut(auth).then(() => {
-                                // Sign-out successful
+                                
                                 localStorage.removeItem('userLoggedIn');
                                 localStorage.removeItem('userEmail');
                                 alert('You have been logged out successfully.');
